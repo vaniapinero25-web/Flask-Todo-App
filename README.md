@@ -83,6 +83,37 @@ I highly recommend you to check out this website.
 - **Jinja templating** : [https://flask.palletsprojects.com/en/1.1.x/templating/](https://flask.palletsprojects.com/en/1.1.x/templating/)
 
 
+## My Changes: Category REST API
 
+I added a new feature to this Flask application that lets you manage **Categories** using a REST API. It supports full CRUD (Create, Read, Update, Delete) functionality and sends/receives data in JSON format.
+
+---
+
+### 1. API Endpoints
+
+| Method | Endpoint | Description | Payload Example | Success Code | Error Code |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **POST** | `/api/categories` | Create a new category | `{"name": "School"}` | `201 Created` | `400` (Missing name) |
+| **GET** | `/api/categories` | Get all categories | None | `200 OK` | None |
+| **GET** | `/api/categories/<int:id>` | Get one category by ID | None | `200 OK` | `404 Not Found` |
+| **PUT** | `/api/categories/<int:id>` | Update a category name | `{"name": "Work"}` | `200 OK` | `404` or `400` |
+| **DELETE**| `/api/categories/<int:id>` | Delete a category | None | `200 OK` | `404 Not Found` |
+
+---
+
+### 2. Implementation Notes
+* **Data Storage:** The categories are tracked inside a local Python dictionary (`categories`) that uses auto-incrementing integer IDs for keys.
+* **Error Handling:** The endpoints check if the `name` field is missing in requests and handles invalid IDs so the app doesn't crash.
+* **Git Branching:** All changes were built on a separate branch called `feature-crud-api` to keep it clean from the original project code.
+
+---
+
+### 3. Testing with Pytest
+
+I wrote 7 unit tests in `test_app.py` using the `pytest` framework to verify that all the CRUD operations work. This covers both successful requests and error handling (positive and negative cases).
+
+#### Run tests with:
+```cmd
+pytest
 
 
