@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,redirect 
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -57,5 +57,53 @@ def delete(sno):
 
     
 if __name__== "__main__ " : 
-    app.run(debug=True)
+     app.run(debug=True)
+
+categories = {}
+category_id_counter = 1
+
+@app.route('/api/categories', methods=['POST'])
+def create_category():
+    global category_id_counter
+    data = request.get_json()
+    if not data or 'name' not in data:
+        return jsonify({"error": "Bad Request: 'name' is required"}), 400
+    
+    new_category = {"id": category_id_counter, "name": data['name']}
+    categories[category_id_counter] = new_category
+    category_id_counter += 1
+    return jsonify(new_category), 201
+
+@app.route('/api/categories', methods=['GET'])
+def get_all_categories():
+    return jsonify(list(categories.values())), 200
+
+@app.route('/api/categories/<int:cat_id>', methods=['GET'])
+def get_category(cat_id):
+    category = categories.get(cat_id)
+    if not category:
+        return jsonify({"error": "Not Found"}), 404
+    return jsonify(category), 200
+
+@app.route('/api/categories/<int:cat_id>', methods=['PUT'])
+def update_category(cat_id):
+    data = request.get_json()
+    category = categories.get(cat_id)
+    
+    if not category:
+        return jsonify({"error": "Not Found"}), 404
+    if not data or 'name' not in data:
+        return jsonify({"error": "Bad Request: 'name' is required"}), 400
+        
+    category['name'] = data['name']
+    return jsonify(category), 200
+
+@app.route('/api/categories/<int:cat_id>', methods=['DELETE'])
+def delete_category(cat_id):
+    if cat_id in categories:
+        del categories[cat_id]
+        return jsonify({"message": "Category deleted successfully"}), 200
+    return jsonify({"error": "Not Found"}), 404
+   
+
     
